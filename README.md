@@ -1,79 +1,58 @@
-# docker-vscode
-In the docker repo, we have learned what docker is, creating a docker file, running a container but when we want to develop inside a container we need to use bind mounts where we mount the local directory into the container, create a compatible user in the docker file to avoid permission issues, use advanced run commands for network and graphical capabilities, use entrypoint scripts for the containers environment setup, a special run flag for nvidia graphics, configure a runtime directory, configure autocompletion for ros, use docker exec to run new terminals. 
+### README.md for Aircraft Engineering Hydrogen Airplane
 
-There is a better solution: Dev containers. 
-First lets show how to make a non-existing project and then how to changes an existing project to fit Dev containers. 
+---
 
-## VSCODE EXTENSION: dev containers
-Docker can be installed as in the docker repo, but the dev containers extension can also help you do it. 
+# Aircraft Engineering Hydrogen Airplane
 
-This repo contains a dummy ros workspace. Lets open the docker-vscode workspace in vs code. 
+This repository contains MATLAB scripts for the weight estimation and bending analysis of an aircraft designed to use hydrogen fuel. The primary focus is on the wing, tail, and fuselage components.
 
-When we type lsb_release -a, we find the ubuntu version of our host. 
+## Files
 
-Now we will mount this directory into a docker container and check the ubuntu version again to confirm a correct mount. We open the command pallete and type:
+- `aircraft_engineering_weight_estimation_wing_tail.m`: Script for estimating the weights of the wing and tail of the aircraft.
+- `aircraft_engineering_bending_fuselage.m`: Script for analyzing the bending of the fuselage.
 
-reopen in container
+## aircraft_engineering_weight_estimation_wing_tail.m
 
-We select:
+This script calculates various weights and dimensions related to the aircraft's wing and tail, including:
 
-Show All Definitions...
+- Constants such as distance from nose to wing, optimal center of gravity position, and gravitational acceleration.
+- Load calculations for passengers, luggage, crew, and attendants.
+- Fuselage, propulsion, cargo floor, bulkhead, wing, and tail dimensions.
+- Initial and iterative weight estimations for maximum takeoff weight (MTOW), maximum zero fuel weight (MZFW), and operating empty weight (OEW).
+- Calculation of forces and moments acting on the aircraft.
+- Determination of lift forces, maximum deflection, and pitch moment.
 
-we type ROS and select ROS ijnek. 
+The script includes a comprehensive iterative process to refine weight estimations and ensure accurate calculations.
 
-Next we select noetic, because that is what we need for the Mirte Master.
+## aircraft_engineering_bending_fuselage.m
 
-We select Desktop-full because we might want to access 2D/3D simulators and 2D/3D perception later. 
+This script focuses on the bending analysis of the aircraft's fuselage. Key features include:
 
-We select OK. 
+- Calculation of weights and forces acting on the wing and tail using various formulas.
+- Determination of maximum moments, slopes, and deflections for a cantilever beam representing the fuselage.
+- Analysis of the distribution of weights and lengths along the fuselage.
+- Plotting of weight distributions to visualize the forces acting on different sections of the fuselage.
 
-Opening a terminal inside vscode and running lsb_release -a again, we now find ubuntu 20.04
+The script uses engineering principles and formulas to ensure precise analysis of the bending effects on the fuselage structure.
 
-We can also check the environment variable ROS_DISTRO
+## Usage
 
-echo $ROS_DISTRO
+1. **Clone the repository**:
 
-We should get noetic
+   ```bash
+   git clone git@github.com:HAJEKEL/aircraft_engineering_hydrogen_airplane.git
+   cd aircraft_engineering_hydrogen_airplane
+   ```
 
-So what did the vscode extension dev container do? 
+2. **Run the scripts** in MATLAB:
+   - Open MATLAB and navigate to the repository directory.
+   - Run `aircraft_engineering_weight_estimation_wing_tail.m` to perform weight estimations.
+   - Run `aircraft_engineering_bending_fuselage.m` to analyze the bending of the fuselage.
 
-It created .devcontainer directory, containing a deccontainer.json file and a Dockerfile. 
+## Contributing
 
-The dockerfile contains similar contents as covered in the dokcer repo, the devcontainer.json contains the parameters for the run command for the docker container. 
+Contributions are welcome! Please feel free to submit a pull request or open an issue for any bugs or suggestions.
 
-Two clafiying comments: 
-1. The things we want to put in this Dockerfile are build/development tools and dependencies. Typically we would have a separate Dockerfile for production/deployment. 
+## License
 
-2. devcontainer.json contains more than just docker runtime arguments, there are other paramters that set up the whole enviornment, for example you can see it has the path to the Dockerfile that it will be building and running. 
-
-In the json file we can change the name to be Development to clarify that this is the docker environment for development. We can also add an extra mount such as: 
-
-"source=${localEnv:HOME}${localEnv:USERPROFILE}/Desktop,target=/home/vscode/Desktop,type=bind"
-
-Where we mount our desktop onto the container.
-
-## GUI programs
-
-Open a terminal, not in vscode and run:
-
-We need to add a features tap to the json file:
-
-"features": {
-    "ghcr.io/devcontainers/features/desktop-lite:1":{}
-}
-
-We also need to forward some ports, and give them names. For that we add the following tab:
-
-"forwardPorts": [6080, 5901],
-"portsAttributes": {
-    "6080": {
-        "label": "Desktop (Web)"
-    },
-    "5901": {
-        "label": Desktop (VNC)"
-    }
-}
-
-We als need to remove "--network=host" from RunArgs, as this prevents the feature from starting its own X server. 
-
-We can now rebuild the container and type localhost:6080 with default password vscode. Now we have a virtual desktop. We can open a terminal in there, it runs dash by default so type bash to use bash shell. # aircraft_engineering_hydrogen_airplane
+This project is licensed under the MIT License.
